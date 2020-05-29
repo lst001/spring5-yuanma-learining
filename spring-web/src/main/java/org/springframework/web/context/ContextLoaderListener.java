@@ -33,6 +33,12 @@ import javax.servlet.ServletContextListener;
  * @since 17.02.2003
  * @see #setContextInitializers
  * @see org.springframework.web.WebApplicationInitializer
+ *
+ *
+ * 这个监听器实现了ServletContextListener，
+ * 也就是说，ContextLoaderListener的 钩子函数 会在服务器启动时和停止时被调用到
+ *
+ * web.xml里的配置
  */
 public class ContextLoaderListener extends ContextLoader implements ServletContextListener {
 
@@ -97,9 +103,13 @@ public class ContextLoaderListener extends ContextLoader implements ServletConte
 
 	/**
 	 * Initialize the root web application context.
+	 *
+	 * contextInitialized（ServletContextEvent event）方法服务器启动时会被调用，
+	 * 而该方法又调用了其父类的一个方法，
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
+		//父类方法
 		initWebApplicationContext(event.getServletContext());
 	}
 

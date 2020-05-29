@@ -119,11 +119,15 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
 	 * @see #getResourcePatternResolver
 	 */
 	protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
+		//加载
 		Resource[] configResources = getConfigResources();
 		if (configResources != null) {
 			reader.loadBeanDefinitions(configResources);
 		}
+		// 这里的getConfigLocations()方法
+		// 获取的就是父类AbstractRefreshableConfigApplicationContext的configLocations变量
 		String[] configLocations = getConfigLocations();
+		//
 		if (configLocations != null) {
 			reader.loadBeanDefinitions(configLocations);
 		}
