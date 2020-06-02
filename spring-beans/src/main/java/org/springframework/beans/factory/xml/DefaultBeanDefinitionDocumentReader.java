@@ -94,8 +94,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 * specified at the {@code <beans/>} level; then parses the contained bean definitions.
 	 */
 	@Override
-	public void
-	registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
+	public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
 		this.readerContext = readerContext;
 		// 获得 XML Document Root Element
 		// 执行注册 BeanDefinition
@@ -166,7 +165,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		// 解析前后的处理，目前这两个方法都是空实现，交由子类来实现
 		// <3> 解析前处理
 		preProcessXml(root);
-		// <4> 解析
+		// <4> 解析  (解析 BeanDefinition 的入口)
 		parseBeanDefinitions(root, this.delegate);
 		// <5> 解析后处理
 		postProcessXml(root);
@@ -192,7 +191,10 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 *
 	 * @param root the DOM root element of the document
 	 *             <p>
-	 *             进行解析逻辑
+	 * 进行解析逻辑
+	 *
+	 *  DefaultBeanDefinitionDocumentReader
+	 * 解析 BeanDefinition 的入口
 	 */
 	protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) {
 		// <1> 如果根节点使用默认命名空间，执行默认解析
@@ -223,7 +225,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 
 	/**
 	 * 如果根节点或子节点使用默认命名空间
-	 *
+	 * DefaultBeanDefinitionDocumentReader
 	 * @param ele
 	 * @param delegate
 	 */
@@ -241,6 +243,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		}
 		// bean
 		else if (delegate.nodeNameEquals(ele, BEAN_ELEMENT)) {
+			//负责 <bean> 标签的解析
 			processBeanDefinition(ele, delegate);
 		}
 		// beans
@@ -374,13 +377,19 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 */
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
 		// 进行 bean 元素解析。如果解析失败，则返回 null 。
+		// (解析默认标签的默认标签)
 		// <1> 如果解析成功，则返回 BeanDefinitionHolder 对象。BeanDefinitionHolder 为持有 name 和 alias 的 BeanDefinition对象。
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
+
+		//如果解析成功（返回的 bdHolder != null ）,细节，抛异常的话会返回null
 		if (bdHolder != null) {
+			// (解析默认标签下的自定义标签)
 			// <2> 进行自定义标签处理
 			bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);
 			try {
+
 				// <3> 进行 BeanDefinition 的注册(对 bdHolder 进行 BeanDefinition 的注册。)
+				// 注册解析的 BeanDefinition
 				// Register the final decorated instance.
 				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
 			} catch (BeanDefinitionStoreException ex) {

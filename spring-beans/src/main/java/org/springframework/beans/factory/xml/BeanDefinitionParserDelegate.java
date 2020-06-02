@@ -403,6 +403,8 @@ public class BeanDefinitionParserDelegate {
 	 * <p>
 	 * <p>
 	 * 类 BeanDefinitionParserDelegate.java 中
+	 *
+	 * 该方法会依次解析 <bean> 标签的属性、各个子元素，解析完成后返回一个 GenericBeanDefinition 实例对象。
 	 */
 	@Nullable
 	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele) {
@@ -1482,22 +1484,39 @@ public class BeanDefinitionParserDelegate {
 		return handler.parse(ele, new ParserContext(this.readerContext, this, containingBd));
 	}
 
+	// BeanDefinitionParserDelegate.java
 	public BeanDefinitionHolder decorateBeanDefinitionIfRequired(Element ele, BeanDefinitionHolder definitionHolder) {
 		return decorateBeanDefinitionIfRequired(ele, definitionHolder, null);
 	}
 
+
+
+	/**
+	 * BeanDefinitionParserDelegate.java
+	 *
+	 * <1> 和 <2> 处，都是遍历，前者遍历的是属性( attributes )，后者遍历的是子节点( childNodes )，
+	 * 最终调用的都是 #decorateIfRequired(Node node, BeanDefinitionHolder originalDef, BeanDefinition containingBd) 方法，
+	 * 装饰对应的节点( Node )
+	 * @param ele
+	 * @param definitionHolder
+	 * @param containingBd
+	 * @return
+	 */
 	public BeanDefinitionHolder decorateBeanDefinitionIfRequired(
 			Element ele, BeanDefinitionHolder definitionHolder, @Nullable BeanDefinition containingBd) {
 
 		BeanDefinitionHolder finalDefinition = definitionHolder;
 
+		// <1> 遍历属性，查看是否有适用于装饰的【属性】
 		// Decorate based on custom attributes first.
 		NamedNodeMap attributes = ele.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node node = attributes.item(i);
+			//最终调用方法
 			finalDefinition = decorateIfRequired(node, finalDefinition, containingBd);
 		}
 
+		// <2> 遍历子节点，查看是否有适用于修饰的【子节点】
 		// Decorate based on custom nested elements.
 		NodeList children = ele.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
@@ -1509,13 +1528,24 @@ public class BeanDefinitionParserDelegate {
 		return finalDefinition;
 	}
 
+	/**
+	 * 装饰对应的节点( Node )
+	 * @param node
+	 * @param originalDef
+	 * @param containingBd
+	 * @return
+	 */
 	public BeanDefinitionHolder decorateIfRequired(
 			Node node, BeanDefinitionHolder originalDef, @Nullable BeanDefinition containingBd) {
 
+		// <1> 获取自定义标签的命名空间
 		String namespaceUri = getNamespaceURI(node);
+		// <2> 过滤掉默认命名标签
 		if (namespaceUri != null && !isDefaultNamespace(namespaceUri)) {
+			// <2> 如果不是默认的命名空间，则根据该命名空间获取相应的处理器。
 			NamespaceHandler handler = this.readerContext.getNamespaceHandlerResolver().resolve(namespaceUri);
 			if (handler != null) {
+				// <3> 如果处理器存在，则进行装饰处理。
 				BeanDefinitionHolder decorated =
 						handler.decorate(node, originalDef, new ParserContext(this.readerContext, this, containingBd));
 				if (decorated != null) {
