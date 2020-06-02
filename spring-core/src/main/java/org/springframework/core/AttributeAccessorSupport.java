@@ -33,6 +33,10 @@ import org.springframework.util.StringUtils;
  * @author Rob Harrop
  * @author Juergen Hoeller
  * @since 2.0
+ *
+ * 是接口 AttributeAccessor 的实现者。
+ * AttributeAccessor 接口定义了与其他对象的元数据进行连接和访问的约定，
+ * 可以通过该接口对属性进行获取、设置、删除操作。
  */
 @SuppressWarnings("serial")
 public abstract class AttributeAccessorSupport implements AttributeAccessor, Serializable {

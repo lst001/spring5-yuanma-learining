@@ -116,6 +116,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	private Class<? extends BeanDefinitionDocumentReader> documentReaderClass =
 			DefaultBeanDefinitionDocumentReader.class;
 
+
 	private ProblemReporter problemReporter = new FailFastProblemReporter();
 
 	private ReaderEventListener eventListener = new EmptyReaderEventListener();
@@ -124,6 +125,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
 	@Nullable
 	private NamespaceHandlerResolver namespaceHandlerResolver;
+
+
 
 	private DocumentLoader documentLoader = new DefaultDocumentLoader();
 
@@ -565,7 +568,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 		BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
 		// <2> 获取已注册的 BeanDefinition 数量
 		int countBefore = getRegistry().getBeanDefinitionCount();
-		// <3> 创建 XmlReaderContext 对象
+		// <3> 创建 XmlReaderContext 对象 其一
 		// <4> 注册 BeanDefinition  读取 XML 元素，注册 BeanDefinition 们
 		documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
 		// 计算新注册的 BeanDefinition 数量
