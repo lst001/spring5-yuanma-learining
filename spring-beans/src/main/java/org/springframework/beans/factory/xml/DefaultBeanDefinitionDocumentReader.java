@@ -377,7 +377,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 */
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
 		// 进行 bean 元素解析。如果解析失败，则返回 null 。
-		// (解析默认标签的默认标签)
+		// (此方法解析默认标签的默认标签)
 		// <1> 如果解析成功，则返回 BeanDefinitionHolder 对象。BeanDefinitionHolder 为持有 name 和 alias 的 BeanDefinition对象。
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 
