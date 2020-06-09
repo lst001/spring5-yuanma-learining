@@ -425,16 +425,36 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		return result;
 	}
 
+
+	/**
+	 *
+	 * AbstractAutowireCapableBeanFactory.java
+	 *
+	 * 尽可能保证所有 bean 初始化后都会调用 注册的 BeanPostProcessor#postProcessAfterInitialization(Object bean, String beanName)
+	 * 方法进行处理，在实际开发过程中大可以针对此特性设计自己的业务逻辑。
+	 *
+	 * @param existingBean the new bean instance
+	 * (only passed to {@link BeanPostProcessor BeanPostProcessors};
+	 * can follow the {@link #ORIGINAL_INSTANCE_SUFFIX} convention in order to
+	 * enforce the given instance to be returned, i.e. no proxies etc)
+	 * @param beanName
+	 * @return
+	 * @throws BeansException
+	 */
 	@Override
 	public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName)
 			throws BeansException {
 
 		Object result = existingBean;
+		// 遍历 BeanPostProcessor
 		for (BeanPostProcessor processor : getBeanPostProcessors()) {
+			// 处理
 			Object current = processor.postProcessAfterInitialization(result, beanName);
+			// 返回空，则返回 result
 			if (current == null) {
 				return result;
 			}
+			// 修改 result
 			result = current;
 		}
 		return result;
@@ -1881,6 +1901,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * registered BeanPostProcessors, giving them a chance to post-process the
 	 * object obtained from FactoryBeans (for example, to auto-proxy them).
 	 * @see #applyBeanPostProcessorsAfterInitialization
+	 *
+	 * AbstractAutowireCapableBeanFactory.java
+	 *
+	 * 对所有的 {@code postProcessAfterInitialization} 进行回调注册 BeanPostProcessors ，
+	 * 让他们能够后期处理从 FactoryBean 中获取的对象。
 	 */
 	@Override
 	protected Object postProcessObjectFromFactoryBean(Object object, String beanName) {
