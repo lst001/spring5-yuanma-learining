@@ -160,6 +160,9 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	private final Map<String, AutowireCandidateQualifier> qualifiers = new LinkedHashMap<>();
 
+	/**
+	 * 创建 Bean 的 Supplier 对象
+	 */
 	@Nullable
 	private Supplier<?> instanceSupplier;
 
@@ -1074,6 +1077,8 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 		if (hasMethodOverrides()) {
 			Set<MethodOverride> overrides = getMethodOverrides().getOverrides();
 			synchronized (overrides) {
+				// 同步
+				// 循环，执行 prepareMethodOverride
 				for (MethodOverride mo : overrides) {
 					prepareMethodOverride(mo);
 				}
@@ -1087,6 +1092,11 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 * marking it as not overloaded if none found.
 	 * @param mo the MethodOverride object to validate
 	 * @throws BeanDefinitionValidationException in case of validation failure
+	 *
+	 * 根据方法名称，从 class 中获取该方法名的个数：
+	 * 如果个数为 0 ，则抛出 BeanDefinitionValidationException 异常。
+	 * 如果个数为 1 ，则设置该重载方法没有被重载。
+	 *
 	 */
 	protected void prepareMethodOverride(MethodOverride mo) throws BeanDefinitionValidationException {
 		int count = ClassUtils.getMethodCountForName(getBeanClass(), mo.getMethodName());
