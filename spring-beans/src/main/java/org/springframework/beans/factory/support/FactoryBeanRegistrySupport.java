@@ -145,7 +145,7 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 							// 单例 Bean 的前置处理（用于添加标志，当前 bean 正处于创建中）
 							beforeSingletonCreation(beanName);
 							try {
-								// 对从 FactoryBean 获取的对象进行后处理
+								// 对从 FactoryBean 获取的 Bean 实例对象进行后置处理
 								// 生成的对象将暴露给 bean 引用
 								object = postProcessObjectFromFactoryBean(object, beanName);
 							}

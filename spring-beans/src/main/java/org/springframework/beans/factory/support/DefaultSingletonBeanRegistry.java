@@ -194,11 +194,16 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * resolve circular references.
 	 * @param beanName the name of the bean
 	 * @param singletonFactory the factory for the singleton object
+	 *
+	 * DefaultSingletonBeanRegistry.java
+	 *
 	 */
 	protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
+
 		Assert.notNull(singletonFactory, "Singleton factory must not be null");
 		synchronized (this.singletonObjects) {
 			if (!this.singletonObjects.containsKey(beanName)) {
+
 				this.singletonFactories.put(beanName, singletonFactory);
 				this.earlySingletonObjects.remove(beanName);
 				this.registeredSingletons.add(beanName);
@@ -224,9 +229,9 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 *
 	 * 三级缓存（解决循环依赖）
 	 *
-	 * 第一步，从 singletonObjects 中，获取 Bean 对象。
-	 * 第二步，若为空且当前 bean 正在创建中，则从 earlySingletonObjects 中获取 Bean 对象。
-	 * 第三步，若为空且允许提前创建，则从 singletonFactories 中获取相应的 ObjectFactory 对象。
+	 * 第一步，从 singletonObjects 中，获取 Bean 对象。(单例对象的 Cache 。)
+	 * 第二步，若为空且当前 bean 正在创建中，则从 earlySingletonObjects 中获取 Bean 对象。(提前曝光的单例对象的 Cache 。)
+	 * 第三步，若为空且允许提前创建，则从 singletonFactories 中获取相应的 ObjectFactory 对象。(单例对象工厂的 Cache 。)
 	 * 若不为空，则调用其 ObjectFactory#getObject(String name) 方法，创建 Bean 对象，
 	 * 然后将其加入到 earlySingletonObjects ，然后从 singletonFactories 删除。
 	 *
