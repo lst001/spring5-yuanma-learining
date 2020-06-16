@@ -167,16 +167,23 @@ public class MutablePropertyValues implements PropertyValues, Serializable {
 	 * corresponding property or getting merged with it (if applicable).
 	 * @param pv the PropertyValue object to add
 	 * @return this in order to allow for adding multiple property values in a chain
+	 *
+	 * MutablePropertyValues.java
+	 *
 	 */
 	public MutablePropertyValues addPropertyValue(PropertyValue pv) {
 		for (int i = 0; i < this.propertyValueList.size(); i++) {
 			PropertyValue currentPv = this.propertyValueList.get(i);
+			// 匹配
 			if (currentPv.getName().equals(pv.getName())) {
+				// 合并属性
 				pv = mergeIfRequired(pv, currentPv);
+				// 覆盖属性
 				setPropertyValueAt(pv, i);
 				return this;
 			}
 		}
+		// 未匹配到，添加到 propertyValueList 中
 		this.propertyValueList.add(pv);
 		return this;
 	}

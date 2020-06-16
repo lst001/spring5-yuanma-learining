@@ -30,6 +30,12 @@ package org.springframework.beans.factory;
  * @see DisposableBean
  * @see org.springframework.beans.factory.config.BeanDefinition#getPropertyValues()
  * @see org.springframework.beans.factory.support.AbstractBeanDefinition#getInitMethodName()
+ *
+ *
+ * Spring 在完成实例化后，设置完所有属性，进行 “Aware 接口” 和 “BeanPostProcessor 前置处理”之后，
+ * 会接着检测当前 bean 对象是否实现了 InitializingBean 接口。如果是，则会调用其 #afterPropertiesSet() 方法，
+ * 进一步调整 bean 实例对象的状态。
+ *
  */
 public interface InitializingBean {
 
@@ -40,6 +46,10 @@ public interface InitializingBean {
 	 * configuration and final initialization when all bean properties have been set.
 	 * @throws Exception in the event of misconfiguration (such as failure to set an
 	 * essential property) or if initialization fails for any other reason
+	 *
+	 * 该方法在 BeanFactory 设置完了所有属性之后被调用
+	 * 该方法允许 bean 实例设置了所有 bean 属性时 执行初始化工作，如果该过程出现了错误则需要抛出异常
+	 *
 	 */
 	void afterPropertiesSet() throws Exception;
 

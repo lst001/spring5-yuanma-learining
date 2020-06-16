@@ -41,6 +41,16 @@ import org.springframework.beans.BeansException;
  * @since 06.07.2003
  * @see BeanPostProcessor
  * @see PropertyResourceConfigurer
+ *
+ *
+ * BeanFactoryPostProcessor 的机制，就相当于给了我们在 Bean 实例化之前最后一次修改 BeanDefinition 的机会，
+ * 可以利用这个机会对 BeanDefinition 来进行一些额外的操作，比如更改某些 bean 的一些属性，给某些 Bean 增加一些其他的信息等等操作。
+ *
+ * 所以这里总结一句话，就是：#postProcessBeanFactory(...) 方法，工作于 BeanDefinition 加载完成之后，Bean 实例化之前，
+ * 其主要作用是对加载 BeanDefinition 进行修改。有一点需要需要注意的是在 #postProcessBeanFactory(...) 方法中，
+ * 千万不能进行 Bean 的实例化工作，因为这样会导致 Bean 过早实例化，会产生严重后果，
+ * 需要注意的是 BeanFactoryPostProcessor 是与 BeanDefinition 打交道的，如果想要与 Bean 打交道，请使用 BeanPostProcessor 。
+ *
  */
 @FunctionalInterface
 public interface BeanFactoryPostProcessor {

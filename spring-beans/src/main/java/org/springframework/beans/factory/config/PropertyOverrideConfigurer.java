@@ -69,7 +69,9 @@ public class PropertyOverrideConfigurer extends PropertyResourceConfigurer {
 	 */
 	public static final String DEFAULT_BEAN_NAME_SEPARATOR = ".";
 
-
+	/**
+	 * Bean 名字的分隔符
+	 */
 	private String beanNameSeparator = DEFAULT_BEAN_NAME_SEPARATOR;
 
 	private boolean ignoreInvalidKeys = false;
@@ -99,10 +101,12 @@ public class PropertyOverrideConfigurer extends PropertyResourceConfigurer {
 	}
 
 
+	// PropertyOverrideConfigurer.java
 	@Override
 	protected void processProperties(ConfigurableListableBeanFactory beanFactory, Properties props)
 			throws BeansException {
 
+		// 迭代配置文件中的内容
 		for (Enumeration<?> names = props.propertyNames(); names.hasMoreElements();) {
 			String key = (String) names.nextElement();
 			try {
@@ -122,18 +126,25 @@ public class PropertyOverrideConfigurer extends PropertyResourceConfigurer {
 
 	/**
 	 * Process the given key as 'beanName.property' entry.
+	 *
+	 *  PropertyOverrideConfigurer.java
 	 */
 	protected void processKey(ConfigurableListableBeanFactory factory, String key, String value)
 			throws BeansException {
 
+		// 判断是否存在 "."，即获取其索引位置
 		int separatorIndex = key.indexOf(this.beanNameSeparator);
 		if (separatorIndex == -1) {
 			throw new BeanInitializationException("Invalid key '" + key +
 					"': expected 'beanName" + this.beanNameSeparator + "property'");
 		}
+		// 得到 beanName
 		String beanName = key.substring(0, separatorIndex);
+		// 得到属性值
 		String beanProperty = key.substring(separatorIndex + 1);
 		this.beanNames.add(beanName);
+
+		// 替换 (修改beanDefination的值)
 		applyPropertyValue(factory, beanName, beanProperty, value);
 		if (logger.isDebugEnabled()) {
 			logger.debug("Property '" + key + "' set to value [" + value + "]");
@@ -142,16 +153,23 @@ public class PropertyOverrideConfigurer extends PropertyResourceConfigurer {
 
 	/**
 	 * Apply the given property value to the corresponding bean.
+	 *
+	 * PropertyOverrideConfigurer.java
+	 *
+	 * 从容器中获取 BeanDefinition ，然后根据属性 property 和其值 value 构造成一个 PropertyValue 对象，
+	 * 最后调用 #addPropertyValue(PropertyValue pv ) 方法。PropertyValue 是用于保存一组bean属性的信息和值的对像
+	 *
 	 */
 	protected void applyPropertyValue(
 			ConfigurableListableBeanFactory factory, String beanName, String property, String value) {
-
+		// 获得 BeanDefinition 对象
 		BeanDefinition bd = factory.getBeanDefinition(beanName);
 		BeanDefinition bdToUse = bd;
 		while (bd != null) {
 			bdToUse = bd;
 			bd = bd.getOriginatingBeanDefinition();
 		}
+		// 设置 PropertyValue 到 BeanDefinition 中
 		PropertyValue pv = new PropertyValue(property, value);
 		pv.setOptional(this.ignoreInvalidKeys);
 		bdToUse.getPropertyValues().addPropertyValue(pv);
